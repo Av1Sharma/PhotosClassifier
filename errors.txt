@@ -3,3 +3,12 @@ First Error:   File "/Users/avi/Desktop/PhotosClassifier/script.py", line 19, in
        ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
 TypeError: endswith first arg must be str or a tuple of str, not list
 avi@MacBookPro PhotosClassifier % 
+
+Second Error: Should have classified both people as the same:
+avi@MacBookPro PhotosClassifier % /usr/local/bin/python3 /Users/avi/Desktop/PhotosClassifier/script.py
+Loading reference photos...
+-> Successfully learned the face of: Avi1
+-> Successfully learned the face of: Avi
+
+Finished loading references. Total people known: 2
+avi@MacBookPro PhotosClassifier % 

@@ -17,37 +17,27 @@ print("Loading reference photos...")
 
 for filename in os.listdir(REFERENCE_FOLDER):
     if filename.lower().endswith(VALID_EXTENSIONS):
-        # 1. Get the person's name by removing the file extension (e.g., "Tony_Stark.jpg" -> "Tony_Stark")
-        # If filename is "Avi_1.jpg"
-        name = os.path.splitext(filename)[0] # "Avi_1"
-
-        # If there is an underscore followed by a number, split it and just take the first part
-        if "_" in name:
-            name = name.split("_")[0] # Becomes "Avi"
+        # 1. Get the base name (e.g., "Avi1" or "Avi_2")
+        base_name = os.path.splitext(filename)[0]
         
-        # 2. Get the full path to the reference image
-        img_path = os.path.join(REFERENCE_FOLDER, filename)
-        
-        try:
-            # 3. Load the image file
-            ref_image = face_recognition.load_image_file(img_path)
+        # 2. Strip out any numbers or underscores so "Avi1" or "Avi_1" just becomes "Avi"
+        name = ''.join([i for i in base_name if i.isalpha()]).strip()
             
-            # 4. Get the face encoding (the math profile of the face)
-            # We take index [0] because we assume there is only 1 face in a reference photo
+        img_path = os.path.join(REFERENCE_FOLDER, filename)
+        try:
+            ref_image = face_recognition.load_image_file(img_path)
             ref_encoding = face_recognition.face_encodings(ref_image)[0]
             
-            # 5. Save them into our lists
+            # Append the encoding and the cleaned name
             known_face_encodings.append(ref_encoding)
             known_face_names.append(name)
-            
-            print(f"-> Successfully learned the face of: {name}")
-            
+            print(f"-> Learned a face profile for: {name}")
         except IndexError:
-            print(f"!! Warning: Could not find a clear face in {filename}. Make sure it's well-lit.")
-        except Exception as e:
-            print(f"!! Error processing {filename}: {e}")
+            print(f"!! No face found in reference file: {filename}")
 
-print(f"\nFinished loading references. Total people known: {len(known_face_names)}")
+# Let's count UNIQUE names using a Python 'set'
+unique_people = len(set(known_face_names))
+print(f"\nFinished loading references. Total unique people known: {unique_people}\n")
 
 # for root, dirs, files in os.walk(TARGET_FOLDER):
 #     for filename in files:
