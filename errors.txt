@@ -1,0 +1,5 @@
+First Error:   File "/Users/avi/Desktop/PhotosClassifier/script.py", line 19, in <module>
+    if filename.lower().endswith(VALID_EXTENSIONS):
+       ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+TypeError: endswith first arg must be str or a tuple of str, not list
+avi@MacBookPro PhotosClassifier % 

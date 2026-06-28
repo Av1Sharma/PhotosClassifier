@@ -11,7 +11,7 @@ TARGET_FOLDER = "/Users/avi/Desktop/RoboticsPhotos"
 known_face_encodings = []
 known_face_names = []
 
-VALID_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff"]
+VALID_EXTENSIONS = (".jpg", ".jpeg", ".png", ".webp")  # This fixes it!
 
 print("Loading reference photos...")
 
@@ -49,19 +49,19 @@ for filename in os.listdir(REFERENCE_FOLDER):
 
 print(f"\nFinished loading references. Total people known: {len(known_face_names)}")
 
-for root, dirs, files in os.walk(TARGET_FOLDER):
-    for filename in files:
-        if not filename.lower().endswith(VALID_EXTENSIONS): ## checking if the file is an image
-            continue ## skipping if not an image
+# for root, dirs, files in os.walk(TARGET_FOLDER):
+#     for filename in files:
+#         if not filename.lower().endswith(VALID_EXTENSIONS): ## checking if the file is an image
+#             continue ## skipping if not an image
     
-        file_path = os.path.join(TARGET_FOLDER, filename)
-        print(f"Processing {filename}...")
+#         file_path = os.path.join(TARGET_FOLDER, filename)
+#         print(f"Processing {filename}...")
 
-    try:
-        image = face_recognition.load_image_file(file_path) ## loads the image.
+#     try:
+#         image = face_recognition.load_image_file(file_path) ## loads the image.
         
-        face_locations = face_recognition.face_locations(image, model="hog")
-        print(f"-> Found {len(face_locations)} face(s) in this photo.")
+#         face_locations = face_recognition.face_locations(image, model="hog")
+#         print(f"-> Found {len(face_locations)} face(s) in this photo.")
         
-    except Exception as e:
-        print(f"-> Could not process {filename}. Error: {e}")
+#     except Exception as e:
+#         print(f"-> Could not process {filename}. Error: {e}")
