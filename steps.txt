@@ -5,3 +5,7 @@ Second: Build the script.
 Import all the necessary imports. I have already written them down. 
 Create a for loop that will loop through each image in the folder. 
 In this script, I use model HOG. If you have a powerful GPU use CNN.
+
+
+Originally in this script, I had a simple for loop, but I realized I had folders within folders, so we used os.walk
+os.walk loops through the main folder, its subfolders, and all the files inside them.
