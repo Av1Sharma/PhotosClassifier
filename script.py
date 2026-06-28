@@ -18,7 +18,12 @@ print("Loading reference photos...")
 for filename in os.listdir(REFERENCE_FOLDER):
     if filename.lower().endswith(VALID_EXTENSIONS):
         # 1. Get the person's name by removing the file extension (e.g., "Tony_Stark.jpg" -> "Tony_Stark")
-        name = os.path.splitext(filename)[0].replace("_", " ") 
+        # If filename is "Avi_1.jpg"
+        name = os.path.splitext(filename)[0] # "Avi_1"
+
+        # If there is an underscore followed by a number, split it and just take the first part
+        if "_" in name:
+            name = name.split("_")[0] # Becomes "Avi"
         
         # 2. Get the full path to the reference image
         img_path = os.path.join(REFERENCE_FOLDER, filename)
