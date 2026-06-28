@@ -1,11 +1,13 @@
 import os ## need computer access
 import face_recognition ## see step 1
 import cv2 ## also step 1
+import shutil ## to create folder of sorted photos
 
 ## Since my folder is nearly 50Gbs big, I will not create a folder called unsorted photos. I will merely point the script to the folder
 
 REFERENCE_FOLDER = "/Users/avi/Desktop/ReferencePhotos"
 TARGET_FOLDER = "/Users/avi/Desktop/RoboticsPhotos"
+OUTPUT_FOLDER = "/Users/avi/Desktop/SortedPhotos"
 
 # Dictionaries to store our known face data
 known_face_encodings = []
@@ -66,39 +68,31 @@ for root, dirs, files in os.walk(TARGET_FOLDER):
             # 4. Loop through every single face found in this specific photo
             for mystery_face_encoding in face_encodings:
                 
-                # Compare the mystery face against ALL your reference photos
-                # tolerance=0.6 is the standard. Lower = stricter, Higher = looser matching.
+                # Compare the mystery face against all known reference photos
                 matches = face_recognition.compare_faces(known_face_encodings, mystery_face_encoding, tolerance=0.6)
                 
-                name = "Unknown" # Default if no match is found
-                
-                # Check if we got any 'True' matches
+                # Check if a match was identified
                 if True in matches:
-                    # Find the index where 'True' is located (e.g., index 0)
                     first_match_index = matches.index(True)
-                    # Look up the name at that same index
                     name = known_face_names[first_match_index]
                     
-                    print(f" 🎉 MATCH FOUND: {name} is in {filename}!")
-            
+                    print(f" MATCH FOUND: {name} is in {filename}!")
+                    
+                    # Create a path for this specific person's sorted folder
+                    person_output_dir = os.path.join(OUTPUT_FOLDER, name)
+                    
+                    # Automatically create the folder if it does not exist yet
+                    os.makedirs(person_output_dir, exist_ok=True)
+                    
+                    # Define the final destination path for the copied file
+                    destination_path = os.path.join(person_output_dir, filename)
+                    
+                    # Copy the file if it hasn't been copied yet
+                    if not os.path.exists(destination_path):
+                        shutil.copy(file_path, destination_path)
+                        print(f"    Copied {filename} to SortedPhotos/{name}/")
+                        
         except Exception as e:
             print(f"-> Could not process {filename}. Error: {e}")
 
-print("\n Scan complete!")
-
-# for root, dirs, files in os.walk(TARGET_FOLDER):
-#     for filename in files:
-#         if not filename.lower().endswith(VALID_EXTENSIONS): ## checking if the file is an image
-#             continue ## skipping if not an image
-    
-#         file_path = os.path.join(TARGET_FOLDER, filename)
-#         print(f"Processing {filename}...")
-
-#     try:
-#         image = face_recognition.load_image_file(file_path) ## loads the image.
-        
-#         face_locations = face_recognition.face_locations(image, model="hog")
-#         print(f"-> Found {len(face_locations)} face(s) in this photo.")
-        
-#     except Exception as e:
-#         print(f"-> Could not process {filename}. Error: {e}")
+print("\nScan complete!")
