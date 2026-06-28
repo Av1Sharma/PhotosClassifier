@@ -1,0 +1,1 @@
+First: Download the necessary requirements: pip install opencv-python face_recognition
