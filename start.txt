@@ -1,0 +1,6 @@
+Requirements:
+-I input a photo of a person, name the person.
+-Scans through pictures to find matches.
+-Then I can sort through photos if I ever decide to open it back up again with the name.
+-Preferabbly in Python
+-I want to learn this 
