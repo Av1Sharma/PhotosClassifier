@@ -4,7 +4,12 @@ import cv2 ## also step 1
 
 ## Since my folder is nearly 50Gbs big, I will not create a folder called unsorted photos. I will merely point the script to the folder
 
+REFERENCE_FOLDER = "/Users/avi/Desktop/ReferencePhotos"
 TARGET_FOLDER = "/Users/avi/Desktop/RoboticsPhotos"
+
+# Dictionaries to store our known face data
+known_face_encodings = []
+known_face_names = []
 
 VALID_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff"]
 
