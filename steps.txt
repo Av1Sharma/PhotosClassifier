@@ -2,4 +2,6 @@ First: Download the necessary requirements: pip install opencv-python face_recog
 Why? This is already a powerful library for classifying photos, we don't need to do the legwork ourselves. We can just use the import to our advantage.
 
 Second: Build the script.
-
+Import all the necessary imports. I have already written them down. 
+Create a for loop that will loop through each image in the folder. 
+In this script, I use model HOG. If you have a powerful GPU use CNN.
