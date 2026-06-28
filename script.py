@@ -39,6 +39,53 @@ for filename in os.listdir(REFERENCE_FOLDER):
 unique_people = len(set(known_face_names))
 print(f"\nFinished loading references. Total unique people known: {unique_people}\n")
 
+print("Starting 50GB scan across all subfolders...")
+
+# 1. os.walk goes deep into your subfolders (2024, 2025, etc.)
+for root, dirs, files in os.walk(TARGET_FOLDER):
+    for filename in files:
+        # Skip files that aren't images
+        if not filename.lower().endswith(VALID_EXTENSIONS):
+            continue
+            
+        # FIX: Use 'root' instead of TARGET_FOLDER so Python finds files deep inside subfolders
+        file_path = os.path.join(root, filename)
+        print(f"\nProcessing {filename}...")
+
+        # FIX: Everything below is now properly indented inside the loop!
+        try:
+            # 2. Load the image from the 50GB library
+            image = face_recognition.load_image_file(file_path)
+            
+            # 3. Find where the faces are, then calculate their math encodings
+            face_locations = face_recognition.face_locations(image, model="hog")
+            face_encodings = face_recognition.face_encodings(image, face_locations)
+            
+            print(f"-> Found {len(face_locations)} face(s) in this photo.")
+            
+            # 4. Loop through every single face found in this specific photo
+            for mystery_face_encoding in face_encodings:
+                
+                # Compare the mystery face against ALL your reference photos
+                # tolerance=0.6 is the standard. Lower = stricter, Higher = looser matching.
+                matches = face_recognition.compare_faces(known_face_encodings, mystery_face_encoding, tolerance=0.6)
+                
+                name = "Unknown" # Default if no match is found
+                
+                # Check if we got any 'True' matches
+                if True in matches:
+                    # Find the index where 'True' is located (e.g., index 0)
+                    first_match_index = matches.index(True)
+                    # Look up the name at that same index
+                    name = known_face_names[first_match_index]
+                    
+                    print(f" 🎉 MATCH FOUND: {name} is in {filename}!")
+            
+        except Exception as e:
+            print(f"-> Could not process {filename}. Error: {e}")
+
+print("\n Scan complete!")
+
 # for root, dirs, files in os.walk(TARGET_FOLDER):
 #     for filename in files:
 #         if not filename.lower().endswith(VALID_EXTENSIONS): ## checking if the file is an image
