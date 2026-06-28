@@ -8,12 +8,13 @@ TARGET_FOLDER = "/Users/avi/Desktop/RoboticsPhotos"
 
 VALID_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff"]
 
-for filename in os.listdir(TARGET_FOLDER): ## Simple for loop, looping through each file in directory
-    if not filename.lower().endswith(VALID_EXTENSIONS): ## checking if the file is an image
-        continue ## skipping if not an image
+for root, dirs, files in os.walk(TARGET_FOLDER):
+    for filename in files:
+        if not filename.lower().endswith(VALID_EXTENSIONS): ## checking if the file is an image
+            continue ## skipping if not an image
     
-    file_path = os.path.join(TARGET_FOLDER, filename)
-    print(f"Processing {filename}...")
+        file_path = os.path.join(TARGET_FOLDER, filename)
+        print(f"Processing {filename}...")
 
     try:
         image = face_recognition.load_image_file(file_path) ## loads the image.
