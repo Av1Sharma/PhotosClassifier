@@ -9,3 +9,15 @@ In this script, I use model HOG. If you have a powerful GPU use CNN.
 
 Originally in this script, I had a simple for loop, but I realized I had folders within folders, so we used os.walk
 os.walk loops through the main folder, its subfolders, and all the files inside them.
+
+Third: Load the reference photos.
+Why? We need to teach the script what our friends look like before it can find them.
+We loop through a reference folder, clean up the file names (so "Avi1" becomes "Avi"), and calculate the mathematical face encodings for each person.
+
+Fourth: Scan the target photos and find the faces.
+Using os.walk, we go deep into our 50GB target folder and load each image.
+For every image, we locate the faces and calculate their encodings.
+
+Fifth: Compare and sort the matches!
+We compare the mystery faces in the target photos against our known reference encodings.
+If a match is found, we automatically create a sorted folder for that person and copy the photo directly inside. No more manual sorting!
