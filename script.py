@@ -75,21 +75,21 @@ for root, dirs, files in os.walk(TARGET_FOLDER):
                 for index in range(len(matches)):
                     if matches[index]:
                         name = known_face_names[index]
-                    print(f" MATCH FOUND: {name} is in {filename}!")
-                    
-                    # Create a path for this specific person's sorted folder
-                    person_output_dir = os.path.join(OUTPUT_FOLDER, name)
-                    
-                    # Automatically create the folder if it does not exist yet
-                    os.makedirs(person_output_dir, exist_ok=True)
-                    
-                    # Define the final destination path for the copied file
-                    destination_path = os.path.join(person_output_dir, filename)
-                    
-                    # Copy the file if it hasn't been copied yet
-                    if not os.path.exists(destination_path):
-                        shutil.copy(file_path, destination_path)
-                        print(f"    Copied {filename} to SortedPhotos/{name}/")
+                        print(f" MATCH FOUND: {name} is in {filename}!")
+                        
+                        # Create a path for this specific person's sorted folder
+                        person_output_dir = os.path.join(OUTPUT_FOLDER, name)
+                        
+                        # Automatically create the folder if it does not exist yet
+                        os.makedirs(person_output_dir, exist_ok=True)
+                        
+                        # Define the final destination path for the copied file
+                        destination_path = os.path.join(person_output_dir, filename)
+                        
+                        # Copy the file if it hasn't been copied yet
+                        if not os.path.exists(destination_path):
+                            shutil.copy(file_path, destination_path)
+                            print(f"    Copied {filename} to SortedPhotos/{name}/")
                         
         except Exception as e:
             print(f"-> Could not process {filename}. Error: {e}")
