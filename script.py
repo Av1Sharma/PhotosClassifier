@@ -72,10 +72,9 @@ for root, dirs, files in os.walk(TARGET_FOLDER):
                 matches = face_recognition.compare_faces(known_face_encodings, mystery_face_encoding, tolerance=0.6)
                 
                 # Check if a match was identified
-                if True in matches:
-                    first_match_index = matches.index(True)
-                    name = known_face_names[first_match_index]
-                    
+                for index in range(len(matches)):
+                    if matches[index]:
+                        name = known_face_names[index]
                     print(f" MATCH FOUND: {name} is in {filename}!")
                     
                     # Create a path for this specific person's sorted folder
