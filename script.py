@@ -30,8 +30,10 @@ for filename in os.listdir(REFERENCE_FOLDER):
             ref_encoding = face_recognition.face_encodings(ref_image)[0]
             
             # Append the encoding and the cleaned name
-            known_face_encodings.append(ref_encoding)
-            known_face_names.append(name)
+            if name not in known_faces:
+                known_faces[name] = [ref_encoding]
+            else:
+                known_faces[name].append(ref_encoding)
             print(f"-> Learned a face profile for: {name}")
         except IndexError:
             print(f"!! No face found in reference file: {filename}")
