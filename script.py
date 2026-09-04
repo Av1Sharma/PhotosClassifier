@@ -10,8 +10,7 @@ TARGET_FOLDER = "/Users/avi/Desktop/RoboticsPhotos"
 OUTPUT_FOLDER = "/Users/avi/Desktop/SortedPhotos"
 
 # Dictionaries to store our known face data
-known_face_encodings = []
-known_face_names = []
+known_faces = {}
 
 VALID_EXTENSIONS = (".jpg", ".jpeg", ".png", ".webp")  # This fixes it!
 
