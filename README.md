@@ -10,7 +10,7 @@ Download and unzip the Apple-silicon application. It includes the recognition mo
 
 ## Run from source
 
-Python 3.11–3.13 with Tk is recommended. On Linux, install your distribution's Tk package first. Commands below use macOS/Linux venv paths; Windows uses `.venv\Scripts\python`.
+Python 3.12 or 3.13 with Tk is required by the pinned dependencies. On Linux, install your distribution's Tk package first. Commands below use macOS/Linux venv paths; Windows uses `.venv\Scripts\python`.
 
 ```sh
 python3 -m venv .venv
@@ -36,7 +36,7 @@ The catalog lives at `~/.photosclassifier/catalog.sqlite3` and contains local fi
 
 [YuNet](https://github.com/opencv/opencv_zoo/tree/main/models/face_detection_yunet) detects faces; [SFace](https://github.com/opencv/opencv_zoo/tree/main/models/face_recognition_sface) computes embeddings. Model files are pinned to OpenCV Zoo revision `47534e27c9851bb1128ccc0102f1145e27f23f98`; upstream license files accompany downloads.
 
-Images are EXIF-oriented and downscaled to a maximum of 1600 px for inference. Small faces, motion blur, helmets, unusual lighting, and profile views can cause misses or incorrect matches. Reference portraits should be representative and used with the subjects' permission. The app is a personal photo-organization tool, not identity verification. The rebuilt workflow has not been benchmarked on the original 50 GB collection.
+Images are EXIF-oriented and downscaled to a maximum of 1600 px for inference. Small faces, motion blur, helmets, unusual lighting, and profile views can cause misses or incorrect matches. Reference portraits should be representative and used with the subjects' permission. The app is a personal photo-organization tool, not identity verification. The packaged Mac runtime also passes a real face-detection smoke test. The rebuilt workflow has not been benchmarked on the original 50 GB collection.
 
 ## Tests and packaging
 
