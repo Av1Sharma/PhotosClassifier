@@ -8,38 +8,45 @@ from .models import install
 
 class App:
     def __init__(self,root):
-        self.root=root;root.title('PhotosClassifier · Local photo workspace');root.geometry('1180x800');root.minsize(980,760);root.columnconfigure(0,weight=1);root.rowconfigure(1,weight=1)
-        self.events=queue.Queue();self.stop=threading.Event();self.busy=False;self.scan_id=None;self.source=tk.StringVar();self.refs=tk.StringVar();self.threshold=tk.DoubleVar(value=.45);self.filter=tk.StringVar(value='pending');self.status=tk.StringVar(value='Choose reference portraits and a photo library to begin.');self.rows={}
+        self.root=root;root.title('PhotosClassifier');root.geometry('1180x800');root.minsize(980,760);root.columnconfigure(0,weight=1);root.rowconfigure(1,weight=1)
+        self.events=queue.Queue();self.stop=threading.Event();self.busy=False;self.scan_id=None;self.source=tk.StringVar();self.refs=tk.StringVar();self.threshold=tk.DoubleVar(value=.45);self.filter=tk.StringVar(value='pending');self.status=tk.StringVar(value='Choose two folders to begin.');self.rows={}
         state=Path.home()/'.photosclassifier';state.mkdir(exist_ok=True);self.db_path=state/'catalog.sqlite3'
-        root.configure(bg='#f3f3ec');style=ttk.Style();style.theme_use('clam');style.configure('.',font=('Helvetica',12),background='#f3f3ec',foreground='#273c34');style.configure('TButton',padding=(10,6));style.configure('Accent.TButton',background='#315f4d',foreground='white');style.map('Accent.TButton',background=[('active','#234837')]);style.configure('Treeview',rowheight=32,background='#fffef9',fieldbackground='#fffef9');style.configure('Treeview.Heading',font=('Helvetica',11,'bold'),padding=8);style.configure('Title.TLabel',font=('Helvetica',28,'bold'));style.configure('Muted.TLabel',foreground='#63746a',font=('Helvetica',11));style.configure('TEntry',padding=7)
-        head=ttk.Frame(root,padding=(24,20));head.grid(row=0,column=0,sticky='ew');ttk.Label(head,text='PhotosClassifier.',style='Title.TLabel').pack(side='left');ttk.Label(head,text='LOCAL PROCESSING  /  REVIEW BEFORE EXPORT',style='Muted.TLabel').pack(side='right')
-        body=ttk.Panedwindow(root,orient='horizontal');body.grid(row=1,column=0,sticky='nsew',padx=24)
-        left=ttk.Frame(body,padding=(0,8,20,10));body.add(left,weight=1)
-        ttk.Label(left,text='01 / BUILD YOUR COLLECTION',style='Muted.TLabel').pack(anchor='w',pady=(0,8))
-        for title,var,button in [('Reference portraits',self.refs,'Choose references…'),('Photo library',self.source,'Choose library…')]:
-            ttk.Label(left,text=title,font=('Helvetica',13,'bold')).pack(anchor='w',pady=(8,5));ttk.Entry(left,textvariable=var,width=31).pack(fill='x');ttk.Button(left,text=button,command=lambda v=var:self.choose(v)).pack(fill='x',pady=(4,7))
-        ttk.Label(left,text='References: one folder per person.\nEach portrait must contain one face.\nJPEG, PNG, WebP, TIFF, BMP.',style='Muted.TLabel',wraplength=245,justify='left').pack(anchor='w',pady=(0,10))
-        ttk.Label(left,text='Minimum similarity',font=('Helvetica',12,'bold')).pack(anchor='w');ttk.Spinbox(left,from_=.10,to=.99,increment=.01,textvariable=self.threshold,width=9).pack(anchor='w',pady=8)
-        ttk.Label(left,text='Higher = fewer, stricter candidates.\nSimilarity is not a probability.\nAlways review matches before export.',style='Muted.TLabel',wraplength=245,justify='left').pack(anchor='w',pady=(0,8))
-        self.scan_button=ttk.Button(left,text='Scan / resume library',style='Accent.TButton',command=self.start_scan);self.scan_button.pack(fill='x',pady=5)
-        self.pause_button=ttk.Button(left,text='Pause scan',command=self.pause,state='disabled');self.pause_button.pack(fill='x',pady=5)
-        ttk.Button(left,text='Install / verify models',command=self.models).pack(fill='x',pady=5)
-        ttk.Button(left,text='Open previous scan',command=self.previous).pack(fill='x',pady=5)
+        root.configure(bg='#fafbf8');style=ttk.Style();style.theme_use('clam');style.configure('.',font=('Helvetica',12),background='#fafbf8',foreground='#273c34');style.configure('TButton',padding=(10,6));style.configure('Accent.TButton',background='#315f4d',foreground='white');style.map('Accent.TButton',background=[('active','#234837')]);style.configure('Treeview',rowheight=32,background='#fffef9',fieldbackground='#fffef9');style.configure('Treeview.Heading',font=('Helvetica',11,'bold'),padding=8);style.configure('Title.TLabel',font=('Helvetica',22));style.configure('Muted.TLabel',foreground='#63746a',font=('Helvetica',11));style.configure('TEntry',padding=7)
+        head=ttk.Frame(root,padding=(32,28));head.grid(row=0,column=0,sticky='ew');ttk.Label(head,text='PhotosClassifier',style='Title.TLabel').pack(side='left');ttk.Button(head,text='Help',command=self.help).pack(side='right')
+        body=ttk.Panedwindow(root,orient='horizontal');body.grid(row=1,column=0,sticky='nsew',padx=32)
+        left=ttk.Frame(body,padding=(0,12,32,16));body.add(left,weight=1)
+        ttk.Label(left,text='Folders',font=('Helvetica',14)).pack(anchor='w',pady=(0,24))
+        for title,var,button in [('People',self.refs,'Browse…'),('Photos',self.source,'Browse…')]:
+            ttk.Label(left,text=title,font=('Helvetica',12)).pack(anchor='w',pady=(8,5));ttk.Entry(left,textvariable=var,width=31).pack(fill='x');ttk.Button(left,text=button,command=lambda v=var:self.choose(v)).pack(fill='x',pady=(8,24))
+        ttk.Label(left,text='One folder per person.',style='Muted.TLabel',wraplength=245,justify='left').pack(anchor='w',pady=(0,10))
+        ttk.Label(left,text='Match threshold',font=('Helvetica',12)).pack(anchor='w');ttk.Spinbox(left,from_=.10,to=.99,increment=.01,textvariable=self.threshold,width=9).pack(anchor='w',pady=8)
+        ttk.Frame(left,height=20).pack()
+        self.scan_button=ttk.Button(left,text='Scan',style='Accent.TButton',command=self.start_scan);self.scan_button.pack(fill='x',pady=5)
+        self.pause_button=ttk.Button(left,text='Pause',command=self.pause,state='disabled');self.pause_button.pack(fill='x',pady=5)
+        
+        ttk.Button(left,text='Previous scans',command=self.previous).pack(fill='x',pady=5)
         ttk.Separator(left).pack(fill='x',pady=9)
-        ttk.Label(left,text='Your photos stay on this computer.\nOriginal files are never moved.\nOnly approved matches are copied.',style='Muted.TLabel',wraplength=245,justify='left').pack(anchor='w')
+        ttk.Label(left,text='Local processing. Originals kept.',style='Muted.TLabel',wraplength=245,justify='left').pack(anchor='w')
         right=ttk.Frame(body,padding=(8,8,0,8));body.add(right,weight=4)
-        toolbar=ttk.Frame(right);toolbar.pack(fill='x');ttk.Label(toolbar,text='02 / REVIEW CANDIDATES',style='Muted.TLabel').pack(side='left');box=ttk.Combobox(toolbar,textvariable=self.filter,values=['pending','approved','rejected','all'],state='readonly',width=11);box.pack(side='right');box.bind('<<ComboboxSelected>>',lambda e:self.refresh())
+        toolbar=ttk.Frame(right);toolbar.pack(fill='x');ttk.Label(toolbar,text='Matches',style='Muted.TLabel').pack(side='left');box=ttk.Combobox(toolbar,textvariable=self.filter,values=['pending','approved','rejected','all'],state='readonly',width=11);box.pack(side='right');box.bind('<<ComboboxSelected>>',lambda e:self.refresh())
         self.summary=ttk.Label(right,text='No scan selected.',style='Muted.TLabel');self.summary.pack(anchor='w',pady=10)
         self.tree=ttk.Treeview(right,columns=('person','photo','score','status'),show='headings',height=5,selectmode='browse');self.tree.pack(fill='both',expand=True)
         for col,label,width in [('person','Person',115),('photo','Photo',220),('score','Similarity',90),('status','Review',100)]:self.tree.heading(col,text=label);self.tree.column(col,width=width,minwidth=70)
         self.tree.bind('<<TreeviewSelect>>',self.preview)
-        self.preview_label=tk.Label(right,text='A selected candidate appears here.\nReview the highlighted face, then approve or reject.',bg='#e3e8df',fg='#566e5c',height=9,font=('Helvetica',12));self.preview_label.pack(fill='both',expand=True,pady=12)
+        self.preview_label=tk.Label(right,text='Select a photo',bg='#e3e8df',fg='#566e5c',height=9,font=('Helvetica',12));self.preview_label.pack(fill='both',expand=True,pady=12)
         self.detail=ttk.Label(right,text='',style='Muted.TLabel',wraplength=690);self.detail.pack(anchor='w')
         actions=ttk.Frame(right);actions.pack(fill='x',pady=(10,0))
-        ttk.Button(actions,text='Approve',style='Accent.TButton',command=lambda:self.review('approved')).pack(side='left',padx=(0,6));ttk.Button(actions,text='Reject',command=lambda:self.review('rejected')).pack(side='left',padx=6);ttk.Button(actions,text='Reset review',command=lambda:self.review('pending')).pack(side='left',padx=6);ttk.Button(actions,text='Export approved…',command=self.export).pack(side='right')
+        ttk.Button(actions,text='Approve',style='Accent.TButton',command=lambda:self.review('approved')).pack(side='left',padx=(0,6));ttk.Button(actions,text='Reject',command=lambda:self.review('rejected')).pack(side='left',padx=6);ttk.Button(actions,text='Reset',command=lambda:self.review('pending')).pack(side='left',padx=6);ttk.Button(actions,text='Export…',command=self.export).pack(side='right')
         bottom=ttk.Frame(root,padding=(24,14));bottom.grid(row=2,column=0,sticky='ew');self.progress=ttk.Progressbar(bottom,mode='determinate');self.progress.pack(fill='x',pady=(0,8));ttk.Label(bottom,textvariable=self.status,style='Muted.TLabel',wraplength=1100).pack(anchor='w')
-        self.log=tk.Text(root,height=3,bg='#edf0e8',fg='#4a6050',font=('Menlo',10),relief='flat',state='disabled');self.log.grid(row=3,column=0,sticky='ew',padx=24,pady=(0,12))
+        self.log=tk.Text(root,height=3,bg='#edf0e8',fg='#4a6050',font=('Menlo',10),relief='flat',state='disabled');self.log.grid(row=3,column=0,sticky='ew',padx=32,pady=(0,16));self.log.grid_remove()
         root.protocol('WM_DELETE_WINDOW',self.close);root.after(100,self.poll)
+    def help(self):
+        window=tk.Toplevel(self.root);window.title('Help');window.geometry('440x420')
+        frame=ttk.Frame(window,padding=28);frame.pack(fill='both',expand=True)
+        ttk.Label(frame,text='Before you scan',font=('Helvetica',18)).pack(anchor='w',pady=(0,20))
+        ttk.Label(frame,text='People: one folder per person, with clear single-face portraits.\n\nPhotos: a separate library of JPEG, PNG, WebP, TIFF, or BMP files.\n\nA higher threshold gives fewer matches. Scores are similarities, not probabilities. Review each match before exporting.\n\nExport copies approved photos to a separate folder. Originals stay where they are.',wraplength=380,justify='left').pack(anchor='w')
+        ttk.Button(frame,text='Install / verify models',command=self.models).pack(anchor='w',pady=(24,8))
+        ttk.Button(frame,text='Show log',command=lambda:(self.log.grid(),window.destroy())).pack(anchor='w')
     def choose(self,var):
         if self.busy:return
         path=filedialog.askdirectory()
@@ -77,14 +84,14 @@ class App:
                 elif kind=='progress':self.progress.configure(value=value[0]);self.status.set(f'{value[0]} / {value[1]} · {value[2]}')
                 elif kind=='scan_complete':
                     if value:self.scan_id=value
-                    self.refresh();self.status.set('Paused. Resume anytime.' if self.stop.is_set() else 'Scan complete. Review candidates and export approved photos.')
+                    self.refresh();self.status.set('Paused. Resume anytime.' if self.stop.is_set() else 'Scan complete.')
                 elif kind=='exported':self.status.set(f'Export complete: {value[0]} copied, {value[1]} already present. Originals unchanged.')
                 elif kind=='error':self.status.set(value);messagebox.showerror('PhotosClassifier',value)
                 elif kind=='done':self.busy=False;self.scan_button.configure(state='normal');self.pause_button.configure(state='disabled')
         except queue.Empty:pass
         self.root.after(100,self.poll)
     def refresh(self):
-        self.tree.delete(*self.tree.get_children());self.rows={};self.preview_label.configure(image='',text='Select a candidate to review.');self.detail.configure(text='')
+        self.tree.delete(*self.tree.get_children());self.rows={};self.preview_label.configure(image='',text='Select a photo');self.detail.configure(text='')
         if not self.scan_id:return
         db=connect(self.db_path)
         try:
@@ -107,7 +114,7 @@ class App:
             box=json.loads(row['box']);h,w=box['shape'];x,y,bw,bh=box['rect'];draw=ImageDraw.Draw(image);sx,sy=image.width/w,image.height/h
             draw.rectangle((x*sx,y*sy,(x+bw)*sx,(y+bh)*sy),outline='#9bef8b',width=max(3,image.width//180))
             image.thumbnail((max(300,self.preview_label.winfo_width()-20),265));self.preview_image=ImageTk.PhotoImage(image);self.preview_label.configure(image=self.preview_image,text='',height=275)
-            self.detail.configure(text=f'{row["person"]} · cosine similarity {row["score"]:.3f}'+(' · AMBIGUOUS: another profile scored similarly.' if row['ambiguous'] else '')+'\n'+row['path'])
+            self.detail.configure(text=f'{row["person"]} · cosine similarity {row["score"]:.3f}'+(' · Similar match to another person.' if row['ambiguous'] else '')+'\n'+row['path'])
         except Exception as exc:self.preview_label.configure(image='',text=f'Cannot preview: {exc}')
     def review(self,status):
         if self.busy:return
