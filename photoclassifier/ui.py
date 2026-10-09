@@ -44,7 +44,7 @@ class App:
         window=tk.Toplevel(self.root);window.title('Help');window.geometry('440x420')
         frame=ttk.Frame(window,padding=28);frame.pack(fill='both',expand=True)
         ttk.Label(frame,text='Before you scan',font=('Helvetica',18)).pack(anchor='w',pady=(0,20))
-        ttk.Label(frame,text='People: one folder per person, with clear single-face portraits.\n\nPhotos: a separate library of JPEG, PNG, WebP, TIFF, or BMP files.\n\nA higher threshold gives fewer matches. Scores are similarities, not probabilities. Review each match before exporting.\n\nExport copies approved photos to a separate folder. Originals stay where they are.',wraplength=380,justify='left').pack(anchor='w')
+        ttk.Label(frame,text='People: one folder per person, with clear single-face portraits.\n\nPhotos: a separate library of JPEG, PNG, WebP, TIFF, BMP, or HEIC/HEIF files.\n\nA higher threshold gives fewer matches. Scores are similarities, not probabilities. Review each match before exporting.\n\nExport copies approved photos to a separate folder. Originals stay where they are.',wraplength=380,justify='left').pack(anchor='w')
         ttk.Button(frame,text='Install / verify models',command=self.models).pack(anchor='w',pady=(24,8))
         ttk.Button(frame,text='Show log',command=lambda:(self.log.grid(),window.destroy())).pack(anchor='w')
     def choose(self,var):
