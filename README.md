@@ -24,7 +24,7 @@ The model setup downloads pinned OpenCV Zoo models and verifies their Git LFS SH
 ## Use
 
 1. Create a reference folder with one subfolder per person, such as `references/Avi/portrait1.jpg`. Each reference image should contain one face. Folder names define identities; names are not inferred from filenames.
-2. Select a separate photo library. The app scans JPEG, PNG, WebP, BMP, and TIFF files recursively. HEIC and RAW are not supported.
+2. Select a separate photo library. The app scans JPEG, PNG, WebP, BMP, TIFF, and HEIC/HEIF files recursively. RAW files are not supported.
 3. Scan using the default cosine-similarity threshold of 0.45. A higher threshold returns fewer candidates. Scores are not calibrated probabilities.
 4. Pause and resume scans. Unchanged files are cached in SQLite; changed files invalidate earlier reviews. Failed files can be retried. Changing reference portraits or the threshold starts a distinct scan.
 5. Review every candidate manually. You can inspect the face box, approve, reject, or reset a decision. A `?` marks competing profiles within a 0.05 similarity margin.

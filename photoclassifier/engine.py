@@ -2,13 +2,16 @@ from pathlib import Path
 import hashlib, json, sqlite3, shutil, re
 from PIL import Image, ImageOps
 from .models import ROOT
-EXTENSIONS={'.jpg','.jpeg','.png','.webp','.bmp','.tif','.tiff'}
+EXTENSIONS={'.jpg','.jpeg','.png','.webp','.bmp','.tif','.tiff','.heic','.heif'}
 def fingerprint(path):
     s=path.stat();return f'{s.st_size}:{s.st_mtime_ns}'
 def images(folder):
     return sorted(p for p in folder.rglob('*') if p.is_file() and not p.is_symlink() and p.suffix.lower() in EXTENSIONS)
 def read_image(path,max_size=1600):
     import cv2, numpy as np
+    if path.suffix.lower() in {'.heic','.heif'}:
+        from pillow_heif import register_heif_opener
+        register_heif_opener()
     with Image.open(path) as image:
         image=ImageOps.exif_transpose(image).convert('RGB');image.thumbnail((max_size,max_size))
         return cv2.cvtColor(np.array(image),cv2.COLOR_RGB2BGR)
